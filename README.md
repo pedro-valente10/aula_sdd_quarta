@@ -4,7 +4,7 @@
 >
 > Vocês **são** essa equipe. Em grupo de 5, vão levar a ideia até código rodando passando por quatro skills, nesta ordem:
 >
-> **`/grill-me` → `/to-spec` → `/to-tickets` → `/implement`**
+> **`/grill-with-docs` → `/to-spec` → `/to-tickets` → `/implement`**
 
 Cada grupo vai ter um grilling diferente, e é isso que se espera. Não existe "resposta certa" para o app; o que importa é a qualidade das decisões e o caminho entre elas.
 
@@ -16,7 +16,7 @@ Cada grupo vai ter um grilling diferente, e é isso que se espera. Não existe "
 | ------------- | ---------------------------------------- | ----------------- |
 | 13:20 – 13:30 | Recapitulação das skills                 | Professor         |
 | 13:30 – 13:40 | **0. Setup** (Codespace, skills)         | Grupo             |
-| 13:40 – 14:00 | **1. Grilling** — `/grill-me`            | Grupo             |
+| 13:40 – 14:00 | **1. Grilling** — `/grill-with-docs`     | Grupo             |
 | 14:00 – 14:08 | **2. Spec** — `/to-spec`                 | Grupo             |
 | 14:08 – 14:15 | **3. Tickets + DAG** — `/to-tickets`     | Grupo             |
 | 14:15 – 14:40 | **4. Implementação** — `/implement`      | Grupo             |
@@ -62,7 +62,7 @@ Além do papel:
 
 O Copilot procura skills de projeto em **`.github/skills/<nome-da-skill>/SKILL.md`**. Cada skill é uma pasta; o nome da pasta vira o comando `/nome` no chat.
 
-Vamos instalar **só as 8 skills** que este fluxo usa. As 4 etapas chamam outras skills por baixo: o `grill-me` usa o `grilling`, e o `implement` usa o `tdd` e o `code-review`. O `setup-matt-pocock-skills` configura o repositório.
+Vamos instalar **só as 9 skills** que este fluxo usa. As 4 etapas chamam outras skills por baixo: o `grill-with-docs` usa o `grilling` e o `domain-modeling`, e o `implement` usa o `tdd` e o `code-review`. O `setup-matt-pocock-skills` configura o repositório.
 
 Cole no **terminal do Codespace** (`` Ctrl+` ``):
 
@@ -70,7 +70,8 @@ Cole no **terminal do Codespace** (`` Ctrl+` ``):
 git clone -q https://github.com/mattpocock/skills /tmp/mp-skills
 git -C /tmp/mp-skills checkout -q 5863806dd4e15c63174bee4e7515a4256792ecfa
 mkdir -p .github/skills
-for s in productivity/grill-me productivity/grilling \
+for s in productivity/grilling \
+         engineering/grill-with-docs engineering/domain-modeling \
          engineering/setup-matt-pocock-skills engineering/to-spec engineering/to-tickets \
          engineering/implement engineering/tdd engineering/code-review; do
   cp -r "/tmp/mp-skills/skills/$s" .github/skills/
@@ -78,13 +79,13 @@ done
 ls .github/skills
 ```
 
-Saída esperada (8 pastas):
+Saída esperada (9 pastas):
 
 ```
-code-review  grill-me  grilling  implement  setup-matt-pocock-skills  tdd  to-spec  to-tickets
+code-review  domain-modeling  grill-with-docs  grilling  implement  setup-matt-pocock-skills  tdd  to-spec  to-tickets
 ```
 
-> 💡 Se `/grill-me` não aparecer quando você digitar `/` no chat: `Ctrl+Shift+P` → **Developer: Reload Window**.
+> 💡 Se `/grill-with-docs` não aparecer quando você digitar `/` no chat: `Ctrl+Shift+P` → **Developer: Reload Window**.
 
 ### 0.4 Configurar o repositório para as skills
 
@@ -111,18 +112,18 @@ git add -A && git commit -m "Setup das skills"
 
 > 💡 O commit é só local. Não é preciso `git push`: todo o trabalho da aula fica no Codespace.
 
-✅ **Checklist do setup:** Codespace aberto ✔ · Agent mode + Claude ✔ · 8 skills em `.github/skills` ✔ · `/setup-matt-pocock-skills` com issues locais ✔ · commit ✔
+✅ **Checklist do setup:** Codespace aberto ✔ · Agent mode + Claude ✔ · 9 skills em `.github/skills` ✔ · `/setup-matt-pocock-skills` com issues locais ✔ · commit ✔
 
 ---
 
 ## 1. Grilling (13:40 – 14:00)
 
-🎯 **Objetivo:** o agente entrevista o grupo até vocês terem decidido **o que** é o app. Ele faz as perguntas em rodadas e traz uma recomendação em cada uma. Vocês podem aceitar, recusar ou discutir.
+🎯 **Objetivo:** o agente entrevista o grupo até vocês terem decidido **o que** é o app. Ele faz as perguntas em rodadas e traz uma recomendação em cada uma. Vocês podem aceitar, recusar ou discutir. Conforme vocês respondem, ele registra os termos do domínio em `GLOSSARY.md` e, só quando a decisão for difícil de reverter, propõe um ADR em `docs/adr/`.
 
 **Prompt inicial** — cole no chat, exatamente assim:
 
 ```
-/grill-me Uma equipe está desenvolvendo um aplicativo de lista de compras que permitirá aos usuários criarem e gerenciarem listas para organizar suas compras no mercado. Nós somos essa equipe (um grupo de 5 respondendo junto) e o repositório ainda não tem código.
+/grill-with-docs Uma equipe está desenvolvendo um aplicativo de lista de compras que permitirá aos usuários criarem e gerenciarem listas para organizar suas compras no mercado. Nós somos essa equipe (um grupo de 5 respondendo junto) e o repositório ainda não tem código.
 
 Restrições já decididas — NÃO precisam ser discutidas:
 - Stack: Python + Flask, com HTML renderizado no servidor (templates Jinja2), + pytest para testes. O app fica na pasta app/ (entrada em app/app.py, dependências em app/requirements.txt).
@@ -253,8 +254,8 @@ Para rodar os testes: `cd app && python -m pytest`.
 
 | Sintoma | Solução |
 | --- | --- |
-| `/grill-me` não aparece no `/` | Confira se a pasta existe em `.github/skills/grill-me/SKILL.md` → **Developer: Reload Window**. |
-| Agente diz que não tem "Skill tool" para chamar o `grilling` | Use `/grilling` direto com o mesmo prompt inicial. |
+| `/grill-with-docs` não aparece no `/` | Confira se a pasta existe em `.github/skills/grill-with-docs/SKILL.md` → **Developer: Reload Window**. |
+| Agente diz que não tem "Skill tool" para chamar o `grilling` e o `domain-modeling` | Use `/grilling` direto com o mesmo prompt inicial e acrescente no fim: "siga também a skill em `.github/skills/domain-modeling/SKILL.md`". |
 | `/to-spec` pede para rodar `/setup-matt-pocock-skills` | O passo 0.4 não foi feito. Rodem de novo. |
 | Agente tenta usar o `gh` ou criar issue no GitHub | Digam: "o issue tracker é local markdown, veja `docs/agents/issue-tracker.md`". Se esse arquivo não existir, refaçam o passo 0.4. |
 | Agente quer discutir framework/banco de dados | Lembre: "a stack já está decidida no prompt inicial". |
